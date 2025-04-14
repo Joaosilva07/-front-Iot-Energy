@@ -9,7 +9,7 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form action="/main page/dashboard.html" method="GET">
+        <form action="/login" method="POST">
             <label for="username">Usuário:</label>
             <input type="text" id="username" name="username" required>
             
@@ -18,6 +18,76 @@
             
             <button type="submit">Logar</button>
         </form>
+        
+        <p>Não tem uma conta? <a href="/register">Registrar</a></p>
     </div>
+
+    <!-- Página de Registro -->
+    <div class="register-container" style="display: none;">
+        <h2>Registrar</h2>
+        <form id="register-form">
+            <label for="register-username">Usuário:</label>
+            <input type="text" id="register-username" name="username" required>
+            
+            <label for="register-name">Nome:</label>
+            <input type="text" id="register-name" name="name" required>
+            
+            <label for="register-password">Senha:</label>
+            <input type="password" id="register-password" name="password" required>
+            
+            <button type="submit">Registrar</button>
+        </form>
+        <p>Já tem uma conta? <a href="/">Logar</a></p>
+    </div>
+
+    <script>
+        // Lógica para alternar entre login e registro
+        document.querySelector('a[href="/register"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('.login-container').style.display = 'none';
+            document.querySelector('.register-container').style.display = 'block';
+        });
+
+        document.querySelector('a[href="/"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('.login-container').style.display = 'block';
+            document.querySelector('.register-container').style.display = 'none';
+        });
+
+        // Enviar dados de registro para o servidor
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('register-username').value;
+            const name = document.getElementById('register-name').value;
+            const password = document.getElementById('register-password').value;
+
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    name: name,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registro realizado com sucesso! Agora você pode fazer login.');
+                    document.querySelector('.register-container').style.display = 'none';
+                    document.querySelector('.login-container').style.display = 'block';
+                } else {
+                    alert('Erro ao registrar: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao registrar. Tente novamente.');
+            });
+        });
+    </script>
 </body>
 </html>
